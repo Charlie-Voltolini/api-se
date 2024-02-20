@@ -24,6 +24,7 @@ public class PurchaseController {
     }
 
     @ResponseBody
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value = "/processOrder")
     public ResponseEntity<OrderEntity> getPurchaseInfo(@Valid @RequestBody OrderDTO orderDTO) {
         OrderEntity purchaseEntity = purchaseService.getPurchaseInformation(orderDTO);
