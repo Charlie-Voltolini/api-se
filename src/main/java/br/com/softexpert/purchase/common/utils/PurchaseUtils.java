@@ -9,24 +9,29 @@ import java.util.List;
 
 public class PurchaseUtils {
 
-    private static final BigDecimal BIG_DECIMAL_ZERO = new BigDecimal("0");
-    private static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
+    private static final BigDecimal ONE_HUNDRED = new BigDecimal("100");
 
     public static BigDecimal calcTotalPurchase(List<CustomerEntity> customerEntityList) {
+        if (customerEntityList == null || customerEntityList.isEmpty()) {
+            throw new IllegalArgumentException("A lista de clientes não pode ser vazia ou nula.");
+        }
         return customerEntityList.stream().map(PurchaseUtils::getTotalItensByCustomer).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private static BigDecimal getTotalItensByCustomer(CustomerEntity customerEntity) {
         List<ItemEntity> itemList = customerEntity.getItemList();
+        if (itemList == null || itemList.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
         return itemList.stream().map(ItemEntity::getValue).reduce(new BigDecimal("0"),BigDecimal::add);
     }
 
     public static BigDecimal setFinalValue(BigDecimal totalPurchase,BigDecimal discount, BigDecimal deliveryFee) {
-        BigDecimal finalValue = BIG_DECIMAL_ZERO;
-        if (!discount.equals(BIG_DECIMAL_ZERO)) {
+        BigDecimal finalValue = BigDecimal.ZERO;
+        if (!discount.equals(BigDecimal.ZERO)) {
             finalValue = PurchaseUtils.applyDiscount(totalPurchase, discount);
         }
-        if (!deliveryFee.equals(BIG_DECIMAL_ZERO)) {
+        if (!deliveryFee.equals(BigDecimal.ZERO)) {
             finalValue = PurchaseUtils.applyDeliveryFee(finalValue, deliveryFee);
         }
         return finalValue;
