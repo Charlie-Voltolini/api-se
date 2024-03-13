@@ -15,7 +15,8 @@ public class PurchaseUtils {
         if (customerEntityList == null || customerEntityList.isEmpty()) {
             throw new IllegalArgumentException("A lista de clientes não pode ser vazia ou nula.");
         }
-        return customerEntityList.stream().map(PurchaseUtils::getTotalItensByCustomer).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return customerEntityList.stream().map(PurchaseUtils::getTotalItensByCustomer).reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.DOWN);
     }
 
     private static BigDecimal getTotalItensByCustomer(CustomerEntity customerEntity) {
@@ -27,14 +28,14 @@ public class PurchaseUtils {
     }
 
     public static BigDecimal setFinalValue(BigDecimal totalPurchase,BigDecimal discount, BigDecimal deliveryFee) {
-        BigDecimal finalValue = BigDecimal.ZERO;
+        BigDecimal finalValue = totalPurchase;
         if (!discount.equals(BigDecimal.ZERO)) {
             finalValue = PurchaseUtils.applyDiscount(totalPurchase, discount);
         }
         if (!deliveryFee.equals(BigDecimal.ZERO)) {
             finalValue = PurchaseUtils.applyDeliveryFee(finalValue, deliveryFee);
         }
-        return finalValue;
+        return finalValue.setScale(2, RoundingMode.DOWN);
     }
 
     private static BigDecimal applyDeliveryFee(BigDecimal totalPurchase, BigDecimal deliveryFee) {
@@ -51,7 +52,8 @@ public class PurchaseUtils {
 
     private static BigDecimal calcPercentageByCustomer(BigDecimal total, CustomerEntity customerEntity) {
         BigDecimal totalSpent = PurchaseUtils.getTotalItensByCustomer(customerEntity);
-        return totalSpent.divide(total, 2, RoundingMode.HALF_UP).multiply(ONE_HUNDRED);
+        return totalSpent.divide(total, 2, RoundingMode.HALF_UP).multiply(ONE_HUNDRED)
+                .setScale(2, RoundingMode.DOWN);
     }
 
     public static void setTotalPayableByCustomer(BigDecimal finalValue, List<CustomerEntity> customerEntityList) {
@@ -60,6 +62,7 @@ public class PurchaseUtils {
 
     private static BigDecimal calcTotalPayableFromCustomer(BigDecimal finalValue, CustomerEntity customerEntity) {
         BigDecimal customerPercentage = customerEntity.getPercentage();
-        return customerPercentage.multiply(finalValue).divide(ONE_HUNDRED);
+        return customerPercentage.multiply(finalValue).divide(ONE_HUNDRED)
+                .setScale(2, RoundingMode.DOWN);
     }
 }
