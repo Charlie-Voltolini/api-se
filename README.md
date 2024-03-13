@@ -10,10 +10,11 @@ Project steps:
 - Development strategies =================> 100%
 - Choice of front-end framework =================> 100%
 - Beginning of the back-end project =================> 100%
-- Back-end =================> 80%
+- Back-end =================> 95%
 - Basic front-end development =================> 100%
 - Front-end and back-end integration =================> 100%
-- Research and development on integrating with payment API =================> 100%
-- Integration test =================> 80%
-- Acceptance test =================> 90%
-- Project documentation =================> 98%
+- Research and development on integrating with payment API =================> CANCELED FOR NOW
+- Integration test =================> CANCELED FOR NOW
+- Acceptance test =================> CANCELED FOR NOW
+- Project documentation =================> 100%
+- Adding unit tests =================> 100%
