@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/purchase")
 public class PurchaseController {
 
-    private static final Logger logger = LoggerFactory.getLogger(PurchaseController.class);
-
     private final PurchaseService purchaseService;
 
     @Autowired

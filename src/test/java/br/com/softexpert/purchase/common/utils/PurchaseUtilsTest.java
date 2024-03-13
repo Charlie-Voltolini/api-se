@@ -2,17 +2,16 @@ package br.com.softexpert.purchase.common.utils;
 
 import br.com.softexpert.purchase.entity.CustomerEntity;
 import br.com.softexpert.purchase.entity.ItemEntity;
-import org.junit.jupiter.api.Assertions;
+import br.com.softexpert.purchase.exception.InvalidDiscountException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PurchaseUtilsTest {
 
@@ -38,11 +37,17 @@ class PurchaseUtilsTest {
     @Test
     @DisplayName("It must get an exception if the list was empty.")
     void calcTotalPurchase_EmptyList() throws IllegalArgumentException{
-        List<CustomerEntity> customerEntities = new ArrayList<>();
+        List<CustomerEntity> customerEntities = Collections.emptyList();
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            PurchaseUtils.calcTotalPurchase(customerEntities);
-        });
+        assertThatThrownBy(() -> PurchaseUtils.calcTotalPurchase(customerEntities))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("It must get an exception if the list was null.")
+    void calcTotalPurchase_NullList() throws IllegalArgumentException{
+        assertThatThrownBy(() -> PurchaseUtils.calcTotalPurchase(null))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -57,7 +62,7 @@ class PurchaseUtilsTest {
     }
 
     @Test
-    @DisplayName("Discount and Delivery fee are ZERO.")
+    @DisplayName("When discount and Delivery fee are zero.")
     void setFinalValue_BothZero() {
         BigDecimal totalPurchase = new BigDecimal("100.00");
         BigDecimal discount = BigDecimal.ZERO;
@@ -67,7 +72,7 @@ class PurchaseUtilsTest {
     }
 
     @Test
-    @DisplayName("Discount isn`t ZERO, but delivery fee is.")
+    @DisplayName("When discount isn`t zero, but delivery fee is.")
     void setFinalValue_DiscountNotZero() {
         BigDecimal totalPurchase = new BigDecimal("100.00");
         BigDecimal discount = new BigDecimal("20.00");
@@ -77,7 +82,7 @@ class PurchaseUtilsTest {
     }
 
     @Test
-    @DisplayName("Discount is ZERO, but delivery fee isn`t.")
+    @DisplayName("When discount is zero, but delivery fee isn`t.")
     void setFinalValue_DeliveryFeeNotZero() {
         BigDecimal totalPurchase = new BigDecimal("100.00");
         BigDecimal discount = BigDecimal.ZERO;
@@ -87,7 +92,7 @@ class PurchaseUtilsTest {
     }
 
     @Test
-    @DisplayName("Discount and delivery fee isn`t ZERO.")
+    @DisplayName("When discount and delivery fee isn`t zero.")
     void setFinalValue_BothNotZero() {
         BigDecimal totalPurchase = new BigDecimal("100.00");
         BigDecimal discount = new BigDecimal("20.00");
@@ -97,7 +102,18 @@ class PurchaseUtilsTest {
     }
 
     @Test
-    @DisplayName("Needs to return the correctly percentage by customer.")
+    @DisplayName("When discount is greater than the purchase price.")
+    void setFinalValue_DiscountGreatherThanFinalValue() {
+        BigDecimal totalPurchase = new BigDecimal("100.00");
+        BigDecimal discount = new BigDecimal("200.00");
+        BigDecimal deliveryFee = new BigDecimal("0");
+
+        assertThatThrownBy(() -> PurchaseUtils.setFinalValue(totalPurchase, discount, deliveryFee))
+                .isInstanceOf(InvalidDiscountException.class);
+    }
+
+    @Test
+    @DisplayName("Needs to get the correctly percentage by customer.")
     void calcPercentageByCustomerTest() {
         CustomerEntity customer1 = createCustomerWithItems("Hamburguer", new BigDecimal("25.00"));
         CustomerEntity customer2 = createCustomerWithItems("Hamburguer", new BigDecimal("25.00"));
@@ -118,9 +134,9 @@ class PurchaseUtilsTest {
         BigDecimal finalValue = new BigDecimal("90.00");
 
         CustomerEntity customer1 = new CustomerEntity();
-        CustomerEntity customer2 = new CustomerEntity();
-
         customer1.setPercentage(new BigDecimal("50.00"));
+
+        CustomerEntity customer2 = new CustomerEntity();
         customer2.setPercentage(new BigDecimal("50.00"));
 
         List<CustomerEntity> customerEntityList = List.of(customer1, customer2);

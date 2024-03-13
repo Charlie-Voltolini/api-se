@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Builder
-@Getter
+@Data
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
