@@ -13,8 +13,5 @@ Project steps:
 - Back-end =================> 95%
 - Basic front-end development =================> 100%
 - Front-end and back-end integration =================> 100%
-- Research and development on integrating with payment API =================> CANCELED FOR NOW
-- Integration test =================> CANCELED FOR NOW
-- Acceptance test =================> CANCELED FOR NOW
 - Project documentation =================> 100%
 - Adding unit tests =================> 100%
